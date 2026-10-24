@@ -1,0 +1,327 @@
+openapi: 3.0.3
+info:
+  title: Arkhe GovTech Local API
+  version: 0.1.0
+  description: Perfil sintético, uma organização por instalação. Valores monetários em centavos inteiros. POST exige Origin exata e JSON até 256 KiB.
+servers:
+  - url: http://127.0.0.1:3012/api
+security:
+  - session: []
+paths:
+  /health:
+    get:
+      security: []
+      summary: Liveness do processo; não qualifica integrações
+      responses:
+        '200': {description: Serviço responde em modo synthetic}
+  /ready:
+    get:
+      security: []
+      summary: Readiness básica do SQLite
+      responses:
+        '200': {description: Banco responde e FK está ativa}
+        '503': {$ref: '#/components/responses/Error'}
+  /metrics:
+    get:
+      security: [{session: []}, {metricsToken: []}]
+      summary: Métricas por processo; sessão precisa ser owner
+      responses:
+        '200':
+          description: Exposição Prometheus
+          content:
+            text/plain:
+              schema: {type: string}
+        '401': {$ref: '#/components/responses/Error'}
+        '403': {$ref: '#/components/responses/Error'}
+  /login:
+    post:
+      security: []
+      summary: Autenticar; dez falhas bloqueiam o identificador por até quinze minutos
+      parameters: [{$ref: '#/components/parameters/Origin'}]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email, password]
+              properties:
+                email: {type: string, maxLength: 254}
+                password: {type: string, maxLength: 256}
+      responses:
+        '200':
+          description: Usuário público e cookie HttpOnly
+          headers:
+            Set-Cookie:
+              schema: {type: string}
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/User'}
+        '401': {$ref: '#/components/responses/Error'}
+        '403': {$ref: '#/components/responses/Error'}
+        '429': {$ref: '#/components/responses/Error'}
+  /me:
+    get:
+      summary: Identidade da sessão atual
+      responses:
+        '200':
+          description: Usuário público
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/User'}
+        '401': {$ref: '#/components/responses/Error'}
+  /logout:
+    post:
+      summary: Invalidar sessão e expirar cookie
+      parameters: [{$ref: '#/components/parameters/Origin'}]
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema: {type: object}
+      responses:
+        '200': {description: Sessão encerrada}
+        '401': {$ref: '#/components/responses/Error'}
+        '403': {$ref: '#/components/responses/Error'}
+  /govtech:
+    get:
+      summary: Estado da instalação filtrado por papel
+      description: Author lê somente processos próprios e recebe pilot null; reviewer e owner leem todos. Eventos exibidos limitados aos 100 mais recentes.
+      responses:
+        '200':
+          description: Usuário, órgãos, modalidades, políticas, processos, plano, journal, eventos e conectores
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  mode: {type: string, enum: [synthetic]}
+                  organizationMode: {type: string, enum: [single-org]}
+                  user: {$ref: '#/components/schemas/User'}
+                  cases: {type: array, items: {$ref: '#/components/schemas/Case'}}
+                  config: {$ref: '#/components/schemas/Configuration'}
+                  integrity: {type: boolean}
+                  eventCount: {type: integer}
+                  pilot: {type: object, nullable: true, additionalProperties: true}
+                  events: {type: array, items: {type: object, additionalProperties: true}}
+                  journal: {type: array, items: {type: object, additionalProperties: true}}
+                  agencies: {type: array, items: {type: object, additionalProperties: true}}
+                  kinds: {type: array, items: {type: object, additionalProperties: true}}
+                  connectors: {type: array, items: {type: object, additionalProperties: true}}
+        '401': {$ref: '#/components/responses/Error'}
+  /govtech/cases:
+    post:
+      summary: Criar rascunho; author ou owner
+      description: Campos de identidade e estado são gerados pelo servidor. Repetição cria outro processo; não há Idempotency-Key genérico.
+      parameters: [{$ref: '#/components/parameters/Origin'}]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {$ref: '#/components/schemas/Proposal'}
+      responses:
+        '201':
+          description: Snapshot do rascunho
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/Case'}
+        '400': {$ref: '#/components/responses/Error'}
+        '401': {$ref: '#/components/responses/Error'}
+        '403': {$ref: '#/components/responses/Error'}
+  /govtech/cases/{id}/challenge:
+    parameters: [{$ref: '#/components/parameters/CaseId'}]
+    get:
+      summary: Desafio de aprovação para reviewer/owner diferente do proponente
+      responses:
+        '200':
+          description: Assinar a string statement sem reserializar
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statement: {type: string}
+                  proof: {type: object, additionalProperties: true}
+        '403': {$ref: '#/components/responses/Error'}
+        '404': {$ref: '#/components/responses/Error'}
+        '409': {$ref: '#/components/responses/Error'}
+  /govtech/cases/{id}/action:
+    parameters: [{$ref: '#/components/parameters/CaseId'}]
+    post:
+      summary: Transição sujeita a papel, revisão, política e estado
+      parameters: [{$ref: '#/components/parameters/Origin'}]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [revision, action]
+              properties:
+                revision: {type: integer, minimum: 1}
+                action: {type: string, enum: [submit, approve, reject, execute, resubmit]}
+                statement: {type: string, description: Obrigatório em approve; bytes exatos do desafio}
+                signature: {type: string, description: Obrigatória em approve; Ed25519 base64}
+                reason: {type: string, minLength: 5, maxLength: 1000, description: Obrigatório em reject}
+      responses:
+        '200':
+          description: Snapshot atualizado ou replay de execução já concluída
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/Case'}
+        '400': {$ref: '#/components/responses/Error'}
+        '401': {$ref: '#/components/responses/Error'}
+        '403': {$ref: '#/components/responses/Error'}
+        '404': {$ref: '#/components/responses/Error'}
+        '409': {$ref: '#/components/responses/Error'}
+  /govtech/cases/{id}/export:
+    parameters: [{$ref: '#/components/parameters/CaseId'}]
+    get:
+      summary: Exportar snapshot e cadeia compartilhada; reviewer/owner
+      description: Pode conter detalhes de outros processos. Não enviar para destinatários não autorizados.
+      responses:
+        '200':
+          description: Pacote de evidências local
+          headers:
+            Content-Disposition: {schema: {type: string}}
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  format: {type: string, enum: [arkhe-govtech/local-evidence/v1]}
+                  case: {$ref: '#/components/schemas/Case'}
+                  events: {type: array, items: {type: object, additionalProperties: true}}
+                  checkpoint: {$ref: '#/components/schemas/Digest'}
+                  externalAnchor: {type: boolean, enum: [false]}
+        '403': {$ref: '#/components/responses/Error'}
+        '404': {$ref: '#/components/responses/Error'}
+  /govtech/settings:
+    post:
+      summary: Alterar política ou parada; somente owner
+      parameters: [{$ref: '#/components/parameters/Origin'}]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [revision, action]
+              properties:
+                revision: {type: integer, minimum: 1}
+                action: {type: string, enum: [policy, stop]}
+                stopped: {type: boolean, description: Obrigatório para stop}
+                agency: {$ref: '#/components/schemas/Agency'}
+                limit: {type: integer, minimum: 0, maximum: 10000000000, description: Obrigatório para policy}
+                humanAbove: {type: integer, minimum: 0, description: Obrigatório para policy; menor ou igual a limit}
+      responses:
+        '200':
+          description: Configuração completa com revisão incrementada
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/Configuration'}
+        '400': {$ref: '#/components/responses/Error'}
+        '403': {$ref: '#/components/responses/Error'}
+        '409': {$ref: '#/components/responses/Error'}
+  /govtech/pilot:
+    post:
+      summary: Salvar plano completo versionado; somente owner
+      parameters: [{$ref: '#/components/parameters/Origin'}]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {$ref: '#/components/schemas/PilotInput'}
+      responses:
+        '200': {description: Plano atualizado com revisão, data e ator}
+        '400': {$ref: '#/components/responses/Error'}
+        '403': {$ref: '#/components/responses/Error'}
+        '409': {$ref: '#/components/responses/Error'}
+components:
+  securitySchemes:
+    session: {type: apiKey, in: cookie, name: govtech_session}
+    metricsToken: {type: http, scheme: bearer, description: Token exclusivo de métricas, no mínimo 32 caracteres}
+  parameters:
+    Origin: {name: Origin, in: header, required: true, schema: {type: string}, description: Deve coincidir exatamente com GOVTECH_ORIGIN}
+    CaseId: {name: id, in: path, required: true, schema: {type: string, pattern: '^[a-f0-9-]{36}$'}}
+  responses:
+    Error:
+      description: Erro de validação, acesso ou disponibilidade
+      content:
+        application/json:
+          schema:
+            type: object
+            required: [error]
+            properties:
+              error: {type: string}
+  schemas:
+    Agency: {type: string, enum: [administracao, fazenda, inovacao]}
+    Digest: {type: string, pattern: '^[a-f0-9]{64}$'}
+    User:
+      type: object
+      properties:
+        id: {type: string}
+        name: {type: string}
+        email: {type: string}
+        role: {type: string, enum: [author, reviewer, owner]}
+        publicKey: {type: string, description: PEM SPKI Ed25519}
+    Proposal:
+      type: object
+      required: [agency, kind, title, reference, body, sourceDigest, items]
+      properties:
+        agency: {$ref: '#/components/schemas/Agency'}
+        kind: {type: string, enum: [despesa, licitacao, atendimento]}
+        title: {type: string, minLength: 4, maxLength: 180}
+        reference: {type: string, minLength: 3, maxLength: 100}
+        body: {type: string, minLength: 10, maxLength: 12000}
+        sourceDigest: {$ref: '#/components/schemas/Digest'}
+        items:
+          type: array
+          minItems: 1
+          maxItems: 256
+          items:
+            type: object
+            required: [label, amount]
+            properties:
+              label: {type: string, minLength: 1, maxLength: 120}
+              amount: {type: integer, minimum: 0, maximum: 100000000, description: Centavos}
+    Case:
+      allOf:
+        - {$ref: '#/components/schemas/Proposal'}
+        - type: object
+          properties:
+            id: {type: string}
+            authorId: {type: string}
+            createdAt: {type: string, format: date-time}
+            revision: {type: integer}
+            status: {type: string, enum: [draft, review, authorized, rejected, executed]}
+            digest: {$ref: '#/components/schemas/Digest'}
+            proof: {type: object, nullable: true, additionalProperties: true}
+            review: {type: object, nullable: true, additionalProperties: true}
+            receipt: {type: object, nullable: true, additionalProperties: true}
+    Configuration:
+      type: object
+      properties:
+        revision: {type: integer}
+        stopped: {type: boolean}
+        policies: {type: array, items: {type: object, additionalProperties: true}}
+    PilotInput:
+      type: object
+      required: [revision, owner, targetDate, notes, controls]
+      properties:
+        revision: {type: integer, minimum: 1}
+        owner: {type: string, maxLength: 160}
+        targetDate: {type: string, description: Vazia ou data civil válida YYYY-MM-DD}
+        notes: {type: string, maxLength: 4000}
+        controls:
+          type: array
+          minItems: 5
+          maxItems: 5
+          description: Cada ID aparece exatamente uma vez; documented exige evidência aparada com pelo menos 15 caracteres
+          items:
+            type: object
+            required: [id, state, evidence]
+            properties:
+              id: {type: string, enum: [problem, identity, connector, data, recovery]}
+              state: {type: string, enum: [pending, progress, documented]}
+              evidence: {type: string, maxLength: 1500}

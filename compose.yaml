@@ -1,0 +1,13 @@
+services:
+  govtech:
+    build: .
+    ports:
+      - "127.0.0.1:3012:3012"
+    environment:
+      GOVTECH_ORIGIN: http://127.0.0.1:3012
+      GOVTECH_DATA_DIR: /app/data
+    volumes:
+      - govtech-data:/app/data
+    restart: unless-stopped
+volumes:
+  govtech-data:

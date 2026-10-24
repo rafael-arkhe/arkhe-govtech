@@ -1,0 +1,16 @@
+node_modules/
+.next/
+.data/
+.env*
+!.env.example
+*.sqlite*
+*.db
+*.pem
+credentials.json
+accounts.json
+trust.json
+*.tsbuildinfo
+coverage/
+artifacts/
+*.log
+.DS_Store

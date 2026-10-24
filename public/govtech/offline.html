@@ -1,0 +1,37 @@
+<!doctype html><html lang="pt-BR"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; connect-src 'none'; img-src 'none'; base-uri 'none'; form-action 'none'"><title>Arkhe GovTech · Verificador independente</title><style>body{font:15px/1.7 Arial;background:#f4f6ef;color:#214c36;margin:0;padding:6vw}main{max-width:760px;margin:auto;background:white;border:1px solid #dce4d3;border-radius:8px;padding:40px}small{letter-spacing:2px;color:#708265}h1{font:36px Georgia}label{display:block;font-weight:bold;margin:24px 0}input,button{display:block;margin-top:12px;padding:13px;width:100%;box-sizing:border-box;border:1px solid #bbcdb0;border-radius:4px}button{background:#1a5d41;color:white;cursor:pointer}output{display:block;margin-top:24px;overflow-wrap:anywhere}p{color:#6b7c60}.bad{color:#a33124}.good{color:#25633c}</style><main><small>ARKHE GOVTECH / OFFLINE</small><h1>Verifique a evidência.<br>Retenha a confiança.</h1><p>Este arquivo funciona sem sessão e sem rede. Verifica a cadeia SHA-256 local, a proposta, os passos aritméticos e a assinatura de revisão. Não valida ICP-Brasil, poderes jurídicos ou atos públicos.</p><label>Pacote JSON<input id="file" type="file" accept=".json,application/json"></label><label>Checkpoint retido por canal independente<input id="checkpoint" maxlength="64" placeholder="64 caracteres hexadecimais"></label><button id="verify">Verificar pacote localmente</button><output id="result" role="status"></output><p>Salve esta página para usá-la offline. Não confie apenas na raiz fornecida dentro do próprio pacote. A chave do revisor está vinculada à cadeia; sua autoridade depende do checkpoint e do cadastro confiáveis.</p></main><script>// Web Crypto only: no network or application session.
+async function verifyGovBundle(bundle, trustedCheckpoint, cryptoApi = globalThis.crypto) {
+  const assert = (ok, message) => { if (!ok) throw new Error(message); };
+  const sha = async value => Array.from(new Uint8Array(await cryptoApi.subtle.digest('SHA-256',new TextEncoder().encode(value)))).map(b=>b.toString(16).padStart(2,'0')).join('');
+  assert(bundle?.format==='arkhe-govtech/local-evidence/v1','Formato não suportado.');
+  assert(/^[a-f0-9]{64}$/.test(trustedCheckpoint),'Informe o checkpoint retido fora deste pacote.');
+  assert(Array.isArray(bundle.events)&&bundle.events.length>0&&bundle.events.length<=100000,'Cadeia ausente ou grande demais.');
+  let previous='0'.repeat(64),seq=0; const history=[];
+  for(const e of bundle.events) { assert(e.seq===++seq&&e.previous===previous&&await sha(e.previous+'\n'+e.payload)===e.hash,'Cadeia alterada ou incompleta.');previous=e.hash;history.push(JSON.parse(e.payload)); }
+  assert(previous===bundle.checkpoint&&previous===trustedCheckpoint,'Checkpoint divergente.');
+  const c=bundle.case;
+  assert(c&&Array.isArray(c.items)&&c.items.length>0&&c.items.length<=256,'Proposta inválida.');
+  const digest=await sha(JSON.stringify({domain:'arkhe-govtech/proposal/v1',id:c.id,agency:c.agency,kind:c.kind,title:c.title,reference:c.reference,body:c.body,items:c.items,sourceDigest:c.sourceDigest,authorId:c.authorId}));
+  assert(digest===c.digest,'Conteúdo da proposta alterado.');
+  const events=history.filter(e=>e.caseId===c.id),last=events.at(-1);
+  assert(last?.caseDigest===await sha(JSON.stringify(c)),'Snapshot do processo divergente da cadeia.');
+  assert(events[0]?.action==='created'&&events[0]?.proposalDigest===digest,'Criação não vinculada à cadeia.');
+  assert((last.status||'draft')===c.status&&last.proposalDigest===digest,'Estado sem evidência correspondente.');
+  if(c.proof) {
+    const p=c.proof; assert(p.proposalDigest===digest&&p.prefixTotals.length===c.items.length+1&&p.prefixTotals[0]===0,'Prova inválida.');
+    let sum=0; for(let i=0;i<c.items.length;i++){const n=c.items[i].amount;assert(Number.isSafeInteger(n)&&n>=0,'Valor inválido.');sum+=n;assert(Number.isSafeInteger(sum)&&p.prefixTotals[i+1]===sum,'Passo aritmético inválido.');}
+    assert(sum===p.total&&sum<=p.limit&&p.policyDigest===last.policyDigest,'Conclusão ou política divergente.');
+  }
+  if(c.review) {
+    assert(JSON.stringify(last.review)===JSON.stringify(c.review),'Revisão divergente da cadeia.');
+    const r=c.review,s=JSON.parse(r.statement);assert(s.domain==='arkhe-govtech/review/v1'&&s.proposalDigest===digest&&s.caseId===c.id&&s.policyDigest===c.proof.policyDigest&&s.reviewer!==c.authorId&&s.verdict==='approve','Assinatura sem vínculo à proposta.');
+    const decode=v=>Uint8Array.from(atob(v),ch=>ch.charCodeAt(0));
+    const key=await cryptoApi.subtle.importKey('spki',decode(r.publicKey.replace(/-----[^-]+-----|\s/g,'')),{name:'Ed25519'},false,['verify']);
+    assert(await cryptoApi.subtle.verify('Ed25519',key,decode(r.signature),new TextEncoder().encode(r.statement)),'Assinatura inválida.');
+  }
+  if(c.status==='authorized'||c.status==='executed') assert(c.review,'Revisão obrigatória ausente.');
+  if(c.status==='executed') assert(c.receipt?.externalEffect===false&&c.receipt.proposalDigest===digest&&JSON.stringify(last.receipt)===JSON.stringify(c.receipt),'Recibo sem vínculo.');
+  return {valid:true,events:bundle.events.length,status:c.status,proposalDigest:digest,scope:'Integridade local e assinatura vinculada ao checkpoint informado. Não valida poderes jurídicos, fonte dos insumos ou ato estatal.'};
+}
+
+document.querySelector('#verify').onclick=async()=>{const result=document.querySelector('#result');try{result.className='';result.textContent='Verificando…';const file=document.querySelector('#file').files[0];if(!file||file.size>8388608)throw new Error('Selecione JSON de até 8 MiB.');const data=JSON.parse(await file.text());const checked=await verifyGovBundle(data,document.querySelector('#checkpoint').value.trim());result.className='good';result.textContent=checked.events+' eventos verificados. '+checked.scope;}catch(e){result.className='bad';result.textContent='Falha: '+e.message;}};
+</script></html>

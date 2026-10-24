@@ -1,0 +1,11 @@
+.git
+node_modules
+.next
+.data
+.env*
+*.pem
+*.sqlite*
+*.log
+*.tsbuildinfo
+docs/media
+artifacts

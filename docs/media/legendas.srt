@@ -1,0 +1,311 @@
+1
+00:00:00,300 --> 00:00:10,007
+Este é o Arkhe GovTech, um aplicativo para organizar propostas, revisão
+humana, autorização e evidências de operações públicas.
+
+2
+00:00:10,007 --> 00:00:12,988
+Esta demonstração usa dados sintéticos.
+
+3
+00:00:12,988 --> 00:00:17,344
+O ambiente é local e não envia atos a sistemas do Estado.
+
+4
+00:00:17,344 --> 00:00:21,930
+Vamos percorrer o fluxo completo e os controles disponíveis.
+
+5
+00:00:23,430 --> 00:00:30,575
+A tela de processos reúne propostas de despesas, triagem de licitações e
+atendimento ao cidadão.
+
+6
+00:00:30,575 --> 00:00:36,752
+A busca e os filtros ajudam a localizar registros por referência, órgão e
+situação.
+
+7
+00:00:36,752 --> 00:00:43,375
+Cada processo mantém um estado explícito, sem confundir proposta, autorização
+e execução.
+
+8
+00:00:44,875 --> 00:00:50,620
+O cadastro começa com título, referência administrativa, órgão e modalidade.
+
+9
+00:00:50,620 --> 00:00:54,475
+A justificativa registra o contexto da solicitação.
+
+10
+00:00:54,475 --> 00:01:00,598
+Os itens usam valores em reais, convertidos pelo servidor para centavos
+inteiros.
+
+11
+00:01:00,598 --> 00:01:08,232
+Um documento pode ter seu resumo criptográfico calculado no navegador, sem
+envio do arquivo original.
+
+12
+00:01:09,732 --> 00:01:15,399
+Após o cadastro, o aplicativo exibe o processo e os compromissos da proposta.
+
+13
+00:01:15,399 --> 00:01:22,318
+O resumo da fonte vincula os bytes declarados, mas não certifica a
+autenticidade do documento.
+
+14
+00:01:22,318 --> 00:01:25,998
+O rascunho permanece sem autoridade para execução.
+
+15
+00:01:25,998 --> 00:01:30,340
+O autor precisa encaminhá-lo para uma revisão independente.
+
+16
+00:01:31,840 --> 00:01:39,216
+Ao enviar para revisão, o servidor confere a proposta e a soma dos itens
+contra a alçada do órgão.
+
+17
+00:01:39,216 --> 00:01:43,129
+O resultado fica vinculado ao processo e à política.
+
+18
+00:01:43,129 --> 00:01:46,365
+A mesma pessoa que propôs não pode aprovar.
+
+19
+00:01:46,365 --> 00:01:50,278
+Neste perfil, a revisão humana é sempre obrigatória.
+
+20
+00:01:51,778 --> 00:01:57,911
+A nova fila de aprovações organiza os processos em revisão, autorizados e
+rejeitados.
+
+21
+00:01:57,911 --> 00:02:01,013
+As informações exibidas vêm do banco local.
+
+22
+00:02:01,013 --> 00:02:11,908
+O revisor consegue identificar a referência, o valor e a etapa de cada
+proposta, enquanto a separação de funções continua sendo aplicada pelo
+servidor.
+
+23
+00:02:13,408 --> 00:02:17,712
+Uma segunda conta abre a proposta e revisa seus dados.
+
+24
+00:02:17,712 --> 00:02:22,973
+O modal de aprovação usa a chave Ed25519 local do próprio revisor.
+
+25
+00:02:22,973 --> 00:02:33,016
+A chave privada permanece no navegador; o servidor recebe o desafio assinado e
+valida seu vínculo com a proposta e a política.
+
+26
+00:02:33,016 --> 00:02:35,965
+Esta assinatura não equivale a e-CPF.
+
+27
+00:02:37,465 --> 00:02:41,752
+Com a assinatura válida, o processo passa para autorizado.
+
+28
+00:02:41,752 --> 00:02:46,556
+A autorização registra quem revisou e qual política foi aplicada.
+
+29
+00:02:46,556 --> 00:02:50,325
+Isso ainda não representa um ato público executado.
+
+30
+00:02:50,325 --> 00:02:58,234
+A governança precisa solicitar a execução, e as condições são verificadas
+novamente no momento do despacho.
+
+31
+00:02:59,734 --> 00:03:04,891
+Antes da execução, um modal apresenta o processo e o total proposto.
+
+32
+00:03:04,891 --> 00:03:08,532
+A confirmação deixa claro o alcance da operação.
+
+33
+00:03:08,532 --> 00:03:13,462
+No servidor, a política e a parada de emergência são revalidadas.
+
+34
+00:03:13,462 --> 00:03:20,819
+Somente o simulador local está habilitado; não existe pagamento ou lançamento
+em sistema público.
+
+35
+00:03:22,319 --> 00:03:29,355
+O cockpit consolida operações concluídas, volume sintético e propostas prontas
+para simular.
+
+36
+00:03:29,355 --> 00:03:34,402
+Cada processo executado recebe um identificador único de operação.
+
+37
+00:03:34,402 --> 00:03:40,443
+O efeito simulado, o journal e o evento são gravados na mesma transação
+SQLite.
+
+38
+00:03:40,443 --> 00:03:44,497
+Repetir uma execução concluída não cria outro recibo.
+
+39
+00:03:45,997 --> 00:03:54,820
+O modal de dossiê reúne o resumo da proposta, a política vinculada, os passos
+aritméticos e o identificador da operação.
+
+40
+00:03:54,820 --> 00:04:01,584
+A linha do tempo mostra criação, revisão e execução, com ator, data e resumo
+de cada evento.
+
+41
+00:04:01,584 --> 00:04:05,187
+Isso facilita a inspeção da sequência registrada.
+
+42
+00:04:06,687 --> 00:04:12,867
+A governança administra alçadas por órgão e publica alterações com confirmação
+explícita.
+
+43
+00:04:12,867 --> 00:04:19,254
+Uma mudança de política invalida autorizações anteriores para despacho e exige
+nova revisão.
+
+44
+00:04:19,254 --> 00:04:25,711
+O limiar de atenção é informativo: ele não elimina a revisão humana
+obrigatória neste perfil.
+
+45
+00:04:27,211 --> 00:04:33,367
+O controle de emergência possui um modal que explica o impacto antes da
+confirmação.
+
+46
+00:04:33,367 --> 00:04:38,716
+Quando ativado, bloqueia novas autorizações e execuções nesta instalação.
+
+47
+00:04:38,716 --> 00:04:42,380
+Os processos e recibos anteriores são preservados.
+
+48
+00:04:42,380 --> 00:04:49,489
+A retomada também altera a versão da configuração, exigindo nova revisão de
+autorizações antigas.
+
+49
+00:04:50,989 --> 00:04:55,738
+A tela de evidências apresenta eventos encadeados e o journal local.
+
+50
+00:04:55,738 --> 00:05:01,745
+O pacote exportado contém o processo e o histórico necessário para verificar a
+cadeia.
+
+51
+00:05:01,745 --> 00:05:11,594
+Como a cadeia é compartilhada, a exportação é reservada à revisão e à
+governança, e deve ser compartilhada somente com auditores autorizados.
+
+52
+00:05:13,094 --> 00:05:20,818
+O auditor seleciona o pacote no navegador e informa um checkpoint previamente
+retido por canal independente.
+
+53
+00:05:20,818 --> 00:05:27,326
+O verificador confere o conteúdo, a cadeia, os passos aritméticos e a
+assinatura vinculada.
+
+54
+00:05:27,326 --> 00:05:31,260
+Também existe uma página independente para uso offline.
+
+55
+00:05:31,260 --> 00:05:36,839
+Esta verificação não certifica poderes jurídicos ou autenticidade dos insumos.
+
+56
+00:05:38,339 --> 00:05:44,279
+O painel de conectividade distingue a execução simulada das integrações
+futuras.
+
+57
+00:05:44,279 --> 00:05:53,264
+Gov ponto br, ICP-Brasil, sistemas públicos, HSM e ambientes protegidos não
+são apresentados como integrações concluídas.
+
+58
+00:05:53,264 --> 00:06:02,175
+Essa distinção permite apresentar o que funciona hoje sem antecipar
+certificações ou capacidades ainda não qualificadas.
+
+59
+00:06:03,675 --> 00:06:12,593
+A nova tela de plano do piloto organiza cinco frentes: problema público,
+identidade, conector, dados e recuperação.
+
+60
+00:06:12,593 --> 00:06:16,626
+O plano possui responsável, data-alvo e observações.
+
+61
+00:06:16,626 --> 00:06:21,589
+Cada controle pode estar pendente, em preparação ou documentado.
+
+62
+00:06:21,589 --> 00:06:27,018
+Marcar um controle como documentado exige uma referência de evidência.
+
+63
+00:06:28,518 --> 00:06:34,491
+O modal de edição permite atualizar o plano e registrar uma nova versão no
+servidor.
+
+64
+00:06:34,491 --> 00:06:41,175
+Revisão e governança podem acompanhar o planejamento, mas somente a governança
+pode alterá-lo.
+
+65
+00:06:41,175 --> 00:06:43,592
+O plano também pode ser exportado.
+
+66
+00:06:43,592 --> 00:06:49,565
+Esses estados são declarações da equipe e não substituem uma avaliação
+independente.
+
+67
+00:06:51,065 --> 00:07:00,441
+O Arkhe GovTech demonstra um ciclo funcional de proposta, revisão assinada,
+autorização, execução simulada e verificação independente.
+
+68
+00:07:00,441 --> 00:07:04,919
+A aplicação passou por build de produção e testes automatizados.
+
+69
+00:07:04,919 --> 00:07:14,015
+O próximo passo é validar um processo delimitado com um órgão parceiro e
+qualificar as integrações necessárias para efeitos reais.
