@@ -10,6 +10,7 @@ credentials.json
 accounts.json
 trust.json
 *.tsbuildinfo
+next-env.d.ts
 coverage/
 artifacts/
 *.log

@@ -23,6 +23,8 @@ Os testes usam diretórios temporários, senhas e pares de chave recém-gerados.
 | `scripts/http-smoke.mjs` | Servidor standalone real, HTML, asset offline, login, cookie, estado, CSRF e logout via HTTP |
 | `scripts/check-publication.mjs` | Arquivos versionados, segredos comuns e links Markdown locais |
 
+O comando typecheck gera as definições de rotas com Next typegen antes do TypeScript, para funcionar em clone limpo sem .next. next-env.d.ts é gerado e não versionado.
+
 O runner Node conta também o teste-pai que agrupa o fluxo GovTech. Não confundir quantidade de testes com número de asserts ou cobertura total de segurança.
 
 ## Negativos importantes
