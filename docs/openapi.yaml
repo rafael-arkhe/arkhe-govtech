@@ -196,6 +196,37 @@ paths:
                   externalAnchor: {type: boolean, enum: [false]}
         '403': {$ref: '#/components/responses/Error'}
         '404': {$ref: '#/components/responses/Error'}
+  /govtech/afir/bundle:
+    get:
+      summary: Exportar o bundle AFiR v1 de todas as execuções; reviewer/owner
+      description: Recibos ML-DSA-65 e checkpoints híbridos, verificados pelo WASM fixado antes da resposta. Campos desconhecidos são recusados pelos verificadores.
+      responses:
+        '200':
+          description: OfflineVerificationBundle AFiR v1
+          headers:
+            Content-Disposition: {schema: {type: string}}
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: false
+                required: [profile, checkpoints, receipts]
+                properties:
+                  profile: {type: string, enum: [arkhe-afir-bundle-v1]}
+                  checkpoints: {type: array, items: {type: string, pattern: '^[0-9a-f]+$'}}
+                  receipts: {type: array, items: {type: string, pattern: '^[0-9a-f]{6966}$'}}
+        '403': {$ref: '#/components/responses/Error'}
+        '409': {$ref: '#/components/responses/Error'}
+  /govtech/afir/trust:
+    get:
+      summary: Confiança pública AFiR da instalação; reviewer/owner
+      responses:
+        '200':
+          description: Chaves públicas de recibo e de selagem e identificador do dispositivo
+          content:
+            application/json:
+              schema: {type: object, additionalProperties: true}
+        '403': {$ref: '#/components/responses/Error'}
   /govtech/settings:
     post:
       summary: Alterar política ou parada; somente owner

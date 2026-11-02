@@ -27,7 +27,7 @@ Esta matriz reconcilia a arquitetura-alvo discutida no projeto com o aplicativo 
 | R21 | Retenção e conformidade | Eventos e documentação de limites | Política operacional/regulatória pendente |
 | R22 | Perfil interoperável SCITT/WIMSE | Domínios locais explícitos | Pendente; sem alegação de RFC/conformidade |
 | R23 | Prova da trajetória de raciocínio | Nenhum LLM/prova de trajetória integrado | Pendente |
-| R24 | Assinatura híbrida pós-quântica | Ed25519 nas revisões; verificação de recibos ML-DSA-65 e checkpoints ML-DSA-65 + Ed25519 em bundles AFiR | Pendente para assinatura: o app verifica, não assina |
+| R24 | Assinatura híbrida pós-quântica | Ed25519 nas revisões; recibos AFiR ML-DSA-65 e checkpoints ML-DSA-65 + Ed25519 emitidos a cada execução simulada e verificados pelo WASM | Parcial: revisões continuam só Ed25519; chaves em arquivo, sem HSM |
 | R25 | Casos públicos com benefício medido | Três modalidades de proposta e demonstração sintética | Sem cliente/piloto institucional comprovado |
 | R26 | Pacote para auditor independente | Exportação e verificador | Checkpoint externo e cadastro confiáveis são responsabilidade do auditor |
 | R27 | Revalidação em fila/offline | Política e parada antes da execução local | Fila remota, saldo e revogação institucional pendentes |

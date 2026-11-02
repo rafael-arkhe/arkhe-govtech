@@ -12,7 +12,7 @@ mkdirSync(destination,{recursive:true,mode:0o700});
 const source=new DatabaseSync(join(local,'govtech.sqlite'),{readOnly:true});
 try{await backup(source,join(destination,'govtech.sqlite'));}finally{source.close();}
 const names=['govtech.sqlite'];
-for(const name of readdirSync(local))if(['accounts.json','credentials.json','trust.json'].includes(name)||/^[a-z0-9_-]+\.private\.pem$/.test(name)){
+for(const name of readdirSync(local))if(['accounts.json','credentials.json','trust.json','afir-trust.json'].includes(name)||/^[a-z0-9_-]+\.private\.pem$/.test(name)){
   if(!lstatSync(join(local,name)).isFile())throw new Error('Arquivo de conta inválido no diretório de dados.');
   copyFileSync(join(local,name),join(destination,name));names.push(name);
 }

@@ -38,6 +38,7 @@ Os sistemas públicos não aparecem como destinos executáveis nesse fluxo. As r
 | `lib/govtech.mjs` | Regras de negócio e persistência dos registros GovTech |
 | `lib/store.mjs` | Conexão SQLite, pragmas e transações síncronas |
 | `lib/crypto.mjs` | Verificação Ed25519 nativa do Node |
+| `lib/afir.mjs` | Recibo AFiR, histórico MMR e checkpoint híbrido por execução; BLAKE3 e autoverificação pelo WASM fixado |
 | `lib/observability.mjs` | Logs HTTP e métricas de processo |
 | `public/govtech/verify.mjs` | Verificador independente de pacotes |
 | `public/govtech/offline.html` | Página autossuficiente para verificação offline |

@@ -21,6 +21,7 @@ Os testes usam diretórios temporários, senhas e pares de chave recém-gerados.
 | `tests/bootstrap.test.mjs` | Configuração por .env.local e preservação de contas existentes |
 | `tests/backup.test.mjs` | Snapshot com transações confirmadas em WAL, restore, persistência, sessões removidas, recusa de sobrescrita e digest divergente |
 | `tests/afir.test.mjs` | Hashes fixados do WASM vendorizado contra `PROVENANCE.json`, recusa de artefato alterado, acordo com os vetores de bundle AFiR do monorepo e confiança AFiR estrita |
+| `tests/afir-execution.test.mjs` | Execuções emitem recibo e checkpoint únicos e em ordem; bundle exportado no perfil exato e aceito pelo verificador Rust; remoção, reordenação e confiança alheia rejeitadas; setup preserva as chaves |
 | `scripts/http-smoke.mjs` | Servidor standalone real, HTML, asset offline, login, cookie, estado, CSRF e logout via HTTP |
 | `scripts/check-publication.mjs` | Arquivos versionados, segredos comuns e links Markdown locais |
 

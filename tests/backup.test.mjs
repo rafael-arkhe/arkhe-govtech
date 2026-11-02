@@ -17,6 +17,7 @@ test('backup includes committed WAL state; restore verifies hashes and preserves
  const manifest=JSON.parse(readFileSync(join(target,'manifest.json')));assert.equal(manifest.containsPrivateKeys,true);
  execFileSync(process.execPath,['scripts/restore.mjs',target,restored],{stdio:'pipe'});
  const db=new DatabaseSync(join(restored,'govtech.sqlite'));assert.equal(JSON.parse(db.prepare('SELECT value FROM gov_cases WHERE id=?').get(c.id).value).reference,'BACKUP-TEST');assert.equal(db.prepare('SELECT COUNT(*) AS n FROM sessions').get().n,0);db.close();
+ for(const name of ['afir-trust.json','afir-receipt.private.pem','afir-seal-ed25519.private.pem','afir-seal-mldsa.private.pem'])assert.equal(readFileSync(join(restored,name),'utf8'),readFileSync(join(process.env.GOVTECH_DATA_DIR,name),'utf8'),name);
  assert.throws(()=>execFileSync(process.execPath,['scripts/restore.mjs',target,restored],{stdio:'pipe'}));
  appendFileSync(join(target,'accounts.json'),' ');assert.throws(()=>execFileSync(process.execPath,['scripts/restore.mjs',target,join(base,'tampered')],{stdio:'pipe'}));
 });

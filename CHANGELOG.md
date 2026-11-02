@@ -1,5 +1,14 @@
 # Histórico
 
+## Não lançado — emissão AFiR de 02/11/2026
+
+- Cada execução simulada emite um recibo AFiR v1 (ML-DSA-65), acrescenta-o ao histórico MMR (perfil rbb v3) e sela um checkpoint híbrido ML-DSA-65 + Ed25519, na mesma transação SQLite do efeito, do journal e do evento. Uma falha de assinatura ou de autoverificação aborta a execução.
+- O "modelo" do recibo é o simulador sintético, identificado por um descritor próprio (`arkhe-govtech/executor/v1`); não é um modelo de IA.
+- `GET /api/govtech/afir/bundle` e `GET /api/govtech/afir/trust` para reviewer/owner; o bundle sai exatamente no perfil `arkhe-afir-bundle-v1` e é verificado pelo WASM antes de sair. Botões correspondentes na aba "Verificar pacote".
+- O setup gera chaves AFiR (recibo distinto da selagem) também em instalações existentes, e o backup/restore passa a incluir `afir-trust.json`.
+- Testes de ponta a ponta: o bundle produzido pelo Node (OpenSSL) é aceito pelo verificador Rust (`fips204`), e remoção, reordenação e confiança alheia são rejeitadas.
+- Limites: a atestação de dispositivo fica vazia (chaves em arquivo, sem elemento seguro); a consistência é recalculada a partir de todos os recibos a cada execução; a página offline ainda não verifica AFiR.
+
 ## Não lançado — verificação AFiR de 02/11/2026
 
 - "Verificar pacote" aceita também um OfflineVerificationBundle AFiR v1 (`arkhe-afir-bundle-v1`): recibos ML-DSA-65 e cadeia de checkpoints híbrida ML-DSA-65 + Ed25519, verificados no navegador pelo `arkhe-verify-wasm` vendorizado em `public/govtech/afir/`.

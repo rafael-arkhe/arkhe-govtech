@@ -6,6 +6,7 @@ if(!process.argv.includes('--confirm-synthetic'))throw new Error('Use --confirm-
 const {local}=await import('../lib/paths.mjs');
 const {accounts}=await import('../lib/auth.mjs');
 const {govState,govCreate,govAction,govChallenge}=await import('../lib/govtech.mjs');
+const {afirReady}=await import('../lib/afir.mjs');await afirReady();
 const users=accounts(),owner=users.find(u=>u.role==='owner'),author=users.find(u=>u.role==='author'),reviewer=users.find(u=>u.role==='reviewer');
 if(!owner||!author||!reviewer)throw new Error('Execute pnpm run setup e preserve as três contas de demonstração.');
 if(govState(owner).config.stopped)throw new Error('Parada ativa: nenhum dado foi alterado. Retome explicitamente no app antes de semear demonstrações.');

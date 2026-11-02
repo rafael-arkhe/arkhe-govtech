@@ -48,6 +48,8 @@ Erro JSON: `{"error":"mensagem legível"}`. Stack, caminhos e stderr não são e
 | `GET /govtech/cases/{id}/challenge` | Reviewer/owner independente | Statement atual e certificado aritmético |
 | `POST /govtech/cases/{id}/action` | Conforme ação | Revisão atual, ação e campos complementares |
 | `GET /govtech/cases/{id}/export` | Reviewer/owner | Pacote completo com cadeia compartilhada |
+| `GET /govtech/afir/bundle` | Reviewer/owner | OfflineVerificationBundle AFiR v1 de todas as execuções, verificado antes de sair; 409 sem execução selada |
+| `GET /govtech/afir/trust` | Reviewer/owner | Confiança pública AFiR (`device`, `receipt_key`); entregar ao auditor por canal independente |
 
 Não existe endpoint individual GET do processo: o cliente o seleciona no estado retornado por `/govtech`. Para grandes coleções, será necessário introduzir paginação e consulta específica em uma versão futura.
 

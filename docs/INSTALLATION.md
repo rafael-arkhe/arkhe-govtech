@@ -19,7 +19,7 @@ pnpm dev
 
 Use `pnpm run setup`, com `run`, para não confundir com o comando próprio de configuração do gerenciador pnpm.
 
-O setup gera `accounts.json`, `credentials.json`, `trust.json` e três arquivos `*.private.pem` no diretório privado. Cada conta recebe senha aleatória e par Ed25519. A senha é armazenada como hash scrypt em `accounts.json`; `credentials.json` contém os dados iniciais de acesso em texto, portanto exige proteção equivalente à de uma chave. Não há envio por e-mail.
+O setup gera `accounts.json`, `credentials.json`, `trust.json` e três arquivos `*.private.pem` no diretório privado. Gera também, se ausentes, a chave de recibo AFiR (`afir-receipt.private.pem`), o par de selagem do dispositivo (`afir-seal-ed25519.private.pem`, `afir-seal-mldsa.private.pem`) e a confiança pública `afir-trust.json`; um conjunto incompleto impede a inicialização. Cada conta recebe senha aleatória e par Ed25519. A senha é armazenada como hash scrypt em `accounts.json`; `credentials.json` contém os dados iniciais de acesso em texto, portanto exige proteção equivalente à de uma chave. Não há envio por e-mail.
 
 As contas iniciais são `author@arkhe.local`, `reviewer@arkhe.local` e `owner@arkhe.local`. Senhas nunca são fixas ou publicadas no README. Os nomes exibidos são fictícios de demonstração.
 

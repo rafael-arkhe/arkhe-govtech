@@ -46,12 +46,12 @@ O comando não desativa uma parada existente e não reescreve exemplos já cadas
 | Visão geral | Contagens derivadas dos processos, cadeia local e ciclo de confiança |
 | Processos | Cadastro de despesas, licitações e atendimento; busca, filtros e detalhe |
 | Aprovações | Fila por etapa; revisão independente e rejeição motivada |
-| Execuções | Cockpit, volume sintético, journal e recibos com OperationId |
+| Execuções | Cockpit, volume sintético, journal e recibos com OperationId; cada execução também emite recibo AFiR e checkpoint híbrido |
 | Políticas | Alçadas por órgão, versões e parada/retomada com confirmação |
 | Evidências | Eventos encadeados, dossiê da operação e exportação para auditor |
 | Conectividade | Estado explícito dos simuladores e integrações pendentes |
 | Plano do piloto | Responsável, cinco controles, referências, versões e exportação Markdown |
-| Verificar pacote | Verificação Web Crypto no cliente e página independente offline; bundle AFiR v1 verificado no app pelo WASM fixado por hash |
+| Verificar pacote | Verificação Web Crypto no cliente e página independente offline; bundle AFiR v1 verificado no app pelo WASM fixado por hash e exportável por reviewer/owner |
 
 Modais adicionais apresentam aprovação assinada, confirmação de execução, alteração de política, emergência, edição do plano e dossiê com linha do tempo.
 

@@ -98,7 +98,7 @@ Não há TSA, HSM, prova de consistência entre checkpoints, detecção distribu
 
 ## Perfil AFiR: bundle v1
 
-Um segundo perfil, `arkhe-afir-bundle-v1`, é verificado ao lado do perfil local. Ele não é produzido por este app; vem de um runtime Arkhe que emite recibos AFiR e sela checkpoints. O formato e as regras são do monorepo (`arkhe-verify-core::afir_bundle`), compilado para WASM e copiado para `public/govtech/afir/`.
+Um segundo perfil, `arkhe-afir-bundle-v1`, é verificado ao lado do perfil local e, desde a emissão AFiR, também produzido por este app a cada execução simulada (seção seguinte). Bundles de um runtime Arkhe externo são verificados da mesma forma. O formato e as regras são do monorepo (`arkhe-verify-core::afir_bundle`), compilado para WASM e copiado para `public/govtech/afir/`.
 
 | Elemento | Formato |
 | --- | --- |
@@ -112,3 +112,20 @@ O verificador exige que os tamanhos dos checkpoints dividam os recibos sem sobra
 Antes de instanciar o WASM, `afir.mjs` confere o SHA-256 do glue JS e do binário contra os valores fixados, que também estão em `PROVENANCE.json` com o commit de origem. Isso recusa um artefato desatualizado ou trocado. Não protege contra um servidor malicioso, que poderia substituir também `afir.mjs`; para esse caso, a verificação precisa rodar fora do servidor que entrega o pacote.
 
 Limites: a atestação do dispositivo é carregada mas não validada; a consistência é recalculada a partir de todos os registros; o horário dos recibos não tem autoridade; um recibo prova que a chave assinou os compromissos, não que o conteúdo esteja correto. A página offline ainda não inclui este perfil.
+
+## Emissão AFiR na execução simulada
+
+Na mesma transação SQLite que grava efeito, journal e evento, `lib/afir.mjs` emite um recibo, estende o histórico e sela um checkpoint. Qualquer falha aborta a execução.
+
+| Campo do recibo | Valor |
+| --- | --- |
+| `policy_id` | 16 primeiros bytes de BLAKE3(`AKG:AFIR:POLICY-ID:v1\0` ‖ digest SHA-256 da política), como no runtime Arkhe |
+| `model_fp`, `chunk_cid` | Descritor `arkhe-govtech/executor/v1` do simulador sintético: `chunk_cid` é o CIDv1 BLAKE3 do descritor e `model_fp` o BLAKE3 desse CID. Identifica o executor, não um modelo de IA |
+| `input_hash` | BLAKE3(`arkhe-govtech/afir-input/v1\n` ‖ digest da proposta) |
+| `output_hash` | BLAKE3(`arkhe-govtech/afir-output/v1\n` ‖ JSON do recibo sintético) |
+| `session_nonce` | 16 primeiros bytes de BLAKE3(`arkhe-govtech/afir-nonce/v1\n` ‖ OperationId) |
+| `timestamp` | Segundos do horário do recibo sintético, sem autoridade temporal |
+
+O recibo é assinado em ML-DSA-65 (OpenSSL do Node) e verificado pelo WASM antes de gravado. A folha do MMR é BLAKE3 com domínio sobre o recibo assinado; o checkpoint segue o Listing A.2 com atestação vazia, `policy_summary` = BLAKE3(`arkhe-govtech/policy-summary/v1\n` ‖ digest da política), e é assinado em ML-DSA-65 e Ed25519 com chaves distintas da chave de recibo. Um checkpoint por execução: o histórico cresce de um em um.
+
+A confiança AFiR sai de `afir-trust.json` e deve chegar ao auditor por canal independente; se pacote e confiança vierem do mesmo operador, ele pode fabricar outra história coerente. As chaves ficam em arquivo no diretório privado, não em HSM ou elemento seguro; por isso a atestação é vazia e nada aqui prova o dispositivo.

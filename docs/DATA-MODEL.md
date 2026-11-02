@@ -17,6 +17,7 @@ O adaptador cria o schema de autenticação na abertura. O domínio cria as tabe
 | `gov_cases` | `id TEXT PRIMARY KEY`, `value TEXT` | Snapshot JSON de cada processo |
 | `gov_journal` | `operation_id TEXT PRIMARY KEY`, `case_id TEXT UNIQUE REFERENCES gov_cases(id)`, `value TEXT` | Recibo sintético, único por processo |
 | `gov_events` | `seq INTEGER PRIMARY KEY AUTOINCREMENT`, `case_id TEXT`, `payload TEXT`, `previous TEXT`, `hash TEXT` | Cadeia global de eventos |
+| `gov_afir` | `seq INTEGER PRIMARY KEY AUTOINCREMENT`, `case_id TEXT UNIQUE REFERENCES gov_cases(id)`, `receipt TEXT`, `checkpoint TEXT`, `checkpoint_id TEXT` | Recibo AFiR e checkpoint que o sela, um por execução, append-only por trigger |
 
 Colunas são `NOT NULL` onde especificado no código. `case_id` dos eventos não possui chave estrangeira: eventos de configuração/plano utilizam string vazia. Não há tabela de contas: o bootstrap é armazenado em `accounts.json`.
 

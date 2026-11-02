@@ -8,7 +8,7 @@ const manifest=JSON.parse(readFileSync(join(source,'manifest.json'),'utf8'));
 if(manifest.format!=='arkhe-govtech/backup/v1'||!Array.isArray(manifest.files)||!manifest.files.some(f=>f.name==='govtech.sqlite')||!manifest.files.some(f=>f.name==='accounts.json'))throw new Error('Manifesto de backup inválido.');
 if(new Set(manifest.files.map(f=>f.name)).size!==manifest.files.length)throw new Error('Arquivos duplicados no manifesto.');
 for(const f of manifest.files){
-  if(!['govtech.sqlite','accounts.json','credentials.json','trust.json'].includes(f.name)&&!/^[a-z0-9_-]+\.private\.pem$/.test(f.name))throw new Error('Nome de arquivo não permitido.');
+  if(!['govtech.sqlite','accounts.json','credentials.json','trust.json','afir-trust.json'].includes(f.name)&&!/^[a-z0-9_-]+\.private\.pem$/.test(f.name))throw new Error('Nome de arquivo não permitido.');
   const path=join(source,f.name),stat=lstatSync(path);if(!stat.isFile()||stat.isSymbolicLink())throw new Error('Arquivo de backup inválido.');
   if(createHash('sha256').update(readFileSync(path)).digest('hex')!==f.sha256)throw new Error('Digest de backup divergente.');
 }

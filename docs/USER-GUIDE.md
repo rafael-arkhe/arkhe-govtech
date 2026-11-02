@@ -53,6 +53,8 @@ Na tela Verificar pacote, selecione o JSON e informe o checkpoint independente. 
 
 Um bundle AFiR v1 (`"profile": "arkhe-afir-bundle-v1"`) troca o campo de checkpoint pelo de confiança fixada: `{"device":{"device_id","ed25519","mldsa"},"receipt_key"}` em hexadecimal minúsculo, obtido do operador do dispositivo por canal independente, nunca do próprio bundle. A verificação AFiR funciona apenas no app; a página offline ainda não a inclui.
 
+Reviewer e owner exportam, na mesma tela, o bundle AFiR de todas as execuções e a confiança AFiR da instalação. Entregue a confiança ao auditor por um canal diferente do que leva o bundle.
+
 ## 7. Conectividade
 
 O painel declara simuladores disponíveis e integrações pendentes. Ele não contém botão para habilitar silenciosamente sistemas públicos. Qualificação de conectores, identidade institucional e infraestrutura é trabalho técnico/operacional separado.
