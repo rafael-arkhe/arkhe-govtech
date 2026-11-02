@@ -1,6 +1,8 @@
 node_modules/
 .next/
 .data/
+# lib/ holds the server modules; a global "lib/" ignore must not hide them.
+!lib/
 .env*
 !.env.example
 *.sqlite*
