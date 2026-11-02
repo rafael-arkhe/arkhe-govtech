@@ -51,7 +51,7 @@ O comando não desativa uma parada existente e não reescreve exemplos já cadas
 | Evidências | Eventos encadeados, dossiê da operação e exportação para auditor |
 | Conectividade | Estado explícito dos simuladores e integrações pendentes |
 | Plano do piloto | Responsável, cinco controles, referências, versões e exportação Markdown |
-| Verificar pacote | Verificação Web Crypto no cliente e página independente offline |
+| Verificar pacote | Verificação Web Crypto no cliente e página independente offline; bundle AFiR v1 verificado no app pelo WASM fixado por hash |
 
 Modais adicionais apresentam aprovação assinada, confirmação de execução, alteração de política, emergência, edição do plano e dossiê com linha do tempo.
 

@@ -7,7 +7,7 @@
 - Windows ou Linux para execução Node. O build inclui um adaptador de links para o tracing standalone no Windows.
 - Navegador com Web Crypto e Ed25519. Use localhost ou HTTPS para assinatura; HTTP remoto pode não oferecer contexto seguro.
 
-As versões das dependências diretas e o lockfile foram preservados de forma explícita. Não há requisito de Rust, Python, PostgreSQL, IA remota ou WASM do monorepo para executar o app.
+As versões das dependências diretas e o lockfile foram preservados de forma explícita. Não há requisito de Rust, Python, PostgreSQL, IA remota ou checkout do monorepo para executar o app; o verificador WASM usado para bundles AFiR já vem compilado em `public/govtech/afir/`.
 
 ## Primeiro uso
 

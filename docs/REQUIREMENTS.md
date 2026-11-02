@@ -14,7 +14,7 @@ Esta matriz reconcilia a arquitetura-alvo discutida no projeto com o aplicativo 
 | R08 | Histórico verificável | Cadeia SHA-256, snapshot e checkpoint informado | Implementado; não é MMR nem ancoragem externa |
 | R09 | Certificado aritmético de soma/limite | Prefixos e inteiros seguros em JS | Implementado; insumos não autenticados |
 | R10 | Retenção do certificado | Snapshot JSON persistido | Local; não integra PgWormGraph |
-| R11 | Verificação no cliente | Web Crypto e HTML independente | Implementado; sem checker Rust/WASM de PCO |
+| R11 | Verificação no cliente | Web Crypto, HTML independente e `arkhe-verify-wasm` vendorizado para bundles AFiR v1 | Implementado; AFiR só no app, não na página offline; sem checker de PCO |
 | R12 | Prevenir duplicatas | Journal único por processo e OperationId | Implementado no simulador; remoto pendente |
 | R13 | Despacho mTLS para sistemas públicos | Rótulos de destino simulado | Integração oficial pendente |
 | R14 | Login gov.br e principal institucional | Login local | Pendente |
@@ -27,7 +27,7 @@ Esta matriz reconcilia a arquitetura-alvo discutida no projeto com o aplicativo 
 | R21 | Retenção e conformidade | Eventos e documentação de limites | Política operacional/regulatória pendente |
 | R22 | Perfil interoperável SCITT/WIMSE | Domínios locais explícitos | Pendente; sem alegação de RFC/conformidade |
 | R23 | Prova da trajetória de raciocínio | Nenhum LLM/prova de trajetória integrado | Pendente |
-| R24 | Assinatura híbrida pós-quântica | Somente Ed25519 | Pendente |
+| R24 | Assinatura híbrida pós-quântica | Ed25519 nas revisões; verificação de recibos ML-DSA-65 e checkpoints ML-DSA-65 + Ed25519 em bundles AFiR | Pendente para assinatura: o app verifica, não assina |
 | R25 | Casos públicos com benefício medido | Três modalidades de proposta e demonstração sintética | Sem cliente/piloto institucional comprovado |
 | R26 | Pacote para auditor independente | Exportação e verificador | Checkpoint externo e cadastro confiáveis são responsabilidade do auditor |
 | R27 | Revalidação em fila/offline | Política e parada antes da execução local | Fila remota, saldo e revogação institucional pendentes |

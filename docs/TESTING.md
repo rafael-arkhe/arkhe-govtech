@@ -20,6 +20,7 @@ Os testes usam diretórios temporários, senhas e pares de chave recém-gerados.
 | `tests/http-security.test.mjs` | Probes, métodos, parser JSON, tamanho, cookie Secure, no-store, logout, origem, revogação e bloqueio de login |
 | `tests/bootstrap.test.mjs` | Configuração por .env.local e preservação de contas existentes |
 | `tests/backup.test.mjs` | Snapshot com transações confirmadas em WAL, restore, persistência, sessões removidas, recusa de sobrescrita e digest divergente |
+| `tests/afir.test.mjs` | Hashes fixados do WASM vendorizado contra `PROVENANCE.json`, recusa de artefato alterado, acordo com os vetores de bundle AFiR do monorepo e confiança AFiR estrita |
 | `scripts/http-smoke.mjs` | Servidor standalone real, HTML, asset offline, login, cookie, estado, CSRF e logout via HTTP |
 | `scripts/check-publication.mjs` | Arquivos versionados, segredos comuns e links Markdown locais |
 

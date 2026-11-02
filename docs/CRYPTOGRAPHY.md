@@ -95,3 +95,20 @@ O navegador limita o arquivo a 8 MiB; o módulo aceita até 100.000 eventos. O s
 Se pacote e raiz vierem exclusivamente do mesmo operador, ele pode fabricar outro histórico coerente. O auditor deve reter a raiz por canal independente antes de verificar. A chave pública incluída no pacote só ganha significado na medida em que está vinculada ao histórico e a um cadastro/checkpoint confiáveis.
 
 Não há TSA, HSM, prova de consistência entre checkpoints, detecção distribuída de forks ou ancoragem pública. A demonstração positiva usa um pacote sintético e sua raiz para mostrar o mecanismo; isso não é uma atestação independente. Os testes negativos retêm a raiz original e rejeitam alterações.
+
+## Perfil AFiR: bundle v1
+
+Um segundo perfil, `arkhe-afir-bundle-v1`, é verificado ao lado do perfil local. Ele não é produzido por este app; vem de um runtime Arkhe que emite recibos AFiR e sela checkpoints. O formato e as regras são do monorepo (`arkhe-verify-core::afir_bundle`), compilado para WASM e copiado para `public/govtech/afir/`.
+
+| Elemento | Formato |
+| --- | --- |
+| Recibo | AFiR v1, 174 bytes de campos + assinatura ML-DSA-65 de 3.309 bytes, contexto `ARKHE_AFIR_RECEIPT_V1` |
+| Folha do MMR | BLAKE3 com domínio sobre o recibo assinado |
+| Checkpoint | Corpo do Listing A.2 do whitepaper AGI-P2P v2.3, assinado em ML-DSA-65 e Ed25519; as duas assinaturas são exigidas |
+| Bundle | JSON com `profile`, `checkpoints` e `receipts` em hexadecimal; campos desconhecidos são recusados |
+
+O verificador exige que os tamanhos dos checkpoints dividam os recibos sem sobra, rejeita recibo repetido, percorre a cadeia desde o primeiro checkpoint recalculando o MMR e confere cada recibo contra a chave de recibo fixada. A chave de recibo deve diferir da chave de selagem do dispositivo. Códigos de erro como `UNSEALED`, `DUPLICATE`, `CHECKPOINT:EXTENSION` e `RECEIPT:SIGNATURE` são exibidos ao auditor.
+
+Antes de instanciar o WASM, `afir.mjs` confere o SHA-256 do glue JS e do binário contra os valores fixados, que também estão em `PROVENANCE.json` com o commit de origem. Isso recusa um artefato desatualizado ou trocado. Não protege contra um servidor malicioso, que poderia substituir também `afir.mjs`; para esse caso, a verificação precisa rodar fora do servidor que entrega o pacote.
+
+Limites: a atestação do dispositivo é carregada mas não validada; a consistência é recalculada a partir de todos os registros; o horário dos recibos não tem autoridade; um recibo prova que a chave assinou os compromissos, não que o conteúdo esteja correto. A página offline ainda não inclui este perfil.

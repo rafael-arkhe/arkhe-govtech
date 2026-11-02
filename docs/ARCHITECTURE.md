@@ -41,6 +41,8 @@ Os sistemas públicos não aparecem como destinos executáveis nesse fluxo. As r
 | `lib/observability.mjs` | Logs HTTP e métricas de processo |
 | `public/govtech/verify.mjs` | Verificador independente de pacotes |
 | `public/govtech/offline.html` | Página autossuficiente para verificação offline |
+| `public/govtech/afir.mjs` | Carregamento do WASM fixado por hash e verificação de bundles AFiR v1 |
+| `public/govtech/afir/` | Build `web` do `arkhe-verify-wasm` vendorizado e `PROVENANCE.json` |
 
 ## Fronteiras de confiança
 
@@ -84,6 +86,6 @@ O estado da instalação verifica toda a cadeia e consulta coleções em memóri
 
 ## Independência e limites
 
-O app não importa os crates Rust, o WASM do monorepo ou a base PostgreSQL do Intra. O predicado aritmético local e a cadeia SHA-256 possuem nomes de domínio próprios. Os seis estágios mostrados na interface são uma organização conceitual; não demonstram que o app está executando o ContainmentGate Rust ou um kernel em enclave.
+O app não importa os crates Rust nem a base PostgreSQL do Intra. Do monorepo, usa apenas o build `web` do `arkhe-verify-wasm`, copiado para `public/govtech/afir/` com SHA-256 fixado, para verificar bundles AFiR v1 no navegador. O predicado aritmético local e a cadeia SHA-256 possuem nomes de domínio próprios. Os seis estágios mostrados na interface são uma organização conceitual; não demonstram que o app está executando o ContainmentGate Rust ou um kernel em enclave.
 
 Não há motor de interpretação de leis, LLM conectado, prova de raciocínio, conectores oficiais, identidade governamental ou certificação de conformidade. A [migração](MIGRATION.md) explica as adaptações, e o [roadmap](ROADMAP.md) organiza as qualificações necessárias.

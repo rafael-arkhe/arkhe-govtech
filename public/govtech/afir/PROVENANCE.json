@@ -1,0 +1,18 @@
+{
+  "artifact": "arkhe-verify-wasm (wasm-pack --target web)",
+  "source_repository": "Arkhe monorepo, verification/crates/arkhe-verify-wasm",
+  "source_commit": "316afde6c49ba8f2783a91055d162112e38d892a",
+  "build": {
+    "wasm_pack": "wasm-pack 0.14.0",
+    "rustc": "rustc 1.96.0 (ac68faa20 2026-05-25)",
+    "command": "wasm-pack build verification/crates/arkhe-verify-wasm --target web --locked"
+  },
+  "used_exports": [
+    "verify_afir_bundle"
+  ],
+  "sha256": {
+    "arkhe_verify_wasm.js": "b6ea4308e84de3a8962184beb9c05d2b5ab00156638ae47cc90d993b8bd1fc08",
+    "arkhe_verify_wasm_bg.wasm": "b21f4e1b0a89665de759d17b4383b7e1ecd9774d730722ac7fec94c150da0a67"
+  },
+  "note": "Vendored binary. Pinned by hash in public/govtech/afir.mjs and checked before instantiation; rebuild and update both together."
+}
