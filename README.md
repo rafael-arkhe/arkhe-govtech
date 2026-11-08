@@ -88,6 +88,8 @@ O último comando inspeciona arquivos **versionados** e links locais; use-o apó
 
 Comece pelo [índice completo](docs/README.md).
 
+A [pesquisa SIAFIC municipal](docs/SIAFIC-RESEARCH.md) define a evolução proposta para preparação de dossiês, validação das etapas da despesa e integração segura com sistemas municipais, com fontes oficiais e critérios de aceite.
+
 - [Arquitetura e fronteiras](docs/ARCHITECTURE.md)
 - [Domínio, estados e permissões](docs/DOMAIN.md)
 - [API HTTP](docs/API.md) e [OpenAPI](docs/openapi.yaml)
@@ -100,4 +102,4 @@ Comece pelo [índice completo](docs/README.md).
 
 ## Licenciamento
 
-O licenciamento do código está a definir: o pacote está marcado `UNLICENSED` e não foi acrescentada uma concessão de licença aberta nesta publicação. As dependências mantêm seus próprios termos. Veja [NOTICE](NOTICE.md).
+O código próprio está sob a GNU Affero General Public License versão 3. Veja [LICENSE](LICENSE). Uma licença comercial está disponível com o titular do copyright. As dependências mantêm seus próprios termos. Veja [NOTICE](NOTICE.md).
