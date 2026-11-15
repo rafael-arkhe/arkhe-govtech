@@ -18,6 +18,7 @@ Esta documentação descreve a implementação deste repositório. Planos de int
 | [Requisitos](REQUIREMENTS.md) | Rastreabilidade entre intenção, implementação e lacunas | Produto e auditoria |
 | [Migração](MIGRATION.md) | O que foi extraído, adaptado e excluído | Manutenção |
 | [Roadmap](ROADMAP.md) | Etapas para um piloto e integrações reais | Produto e gestão |
+| [Pesquisa SIAFIC municipal](SIAFIC-RESEARCH.md) | Fontes oficiais, correções do benchmark, contrato proposto e backlog de aceite | Produto, engenharia e gestão pública |
 | [ADR 001](adr/001-standalone.md) | Por que uma distribuição independente | Engenharia |
 | [ADR 002](adr/002-local-evidence.md) | Por que um perfil local distinto do kernel Rust | Engenharia e auditoria |
 | [ADR 003](adr/003-single-organization.md) | Isolamento por instalação e limites dos órgãos | Engenharia e operação |

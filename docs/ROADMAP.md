@@ -2,6 +2,8 @@
 
 As etapas abaixo são critérios propostos, não compromissos com datas, clientes ou instituições. Nenhum nome de órgão no app prova uma parceria.
 
+Para o recorte municipal, seguir o [backlog SIAFIC SG01–SG09](SIAFIC-RESEARCH.md): confirmar o benchmark, qualificar consulta em homologação, modelar as etapas da despesa, autoridade, concorrência e reconciliação antes de habilitar escrita remota.
+
 ## A. Consolidar o laboratório
 
 - Preservar compatibilidade dos pacotes, statements e domínios de hash.

@@ -44,4 +44,6 @@ Esta matriz reconcilia a arquitetura-alvo discutida no projeto com o aplicativo 
 
 ## Critério de evolução
 
+O [perfil municipal SIAFIC proposto](SIAFIC-RESEARCH.md) detalha critérios adicionais SG01–SG09 para R04, R09, R12–R15, R18, R20–R21 e R27–R28. Esses critérios não estão implementados: alçada local não equivale a saldo contábil, e idempotência local não garante execução única em sistema remoto.
+
 Um requisito pendente só deve mudar de estado após existir implementação identificável, teste negativo relevante e evidência operacional correspondente. Um preset, diagrama, texto comercial ou preenchimento de checklist não é suficiente para declarar uma integração concluída.

@@ -17,6 +17,12 @@
 - Testes com subconjunto dos vetores do monorepo (válido, remoção, substituição, checkpoint pulado e recibo forjado) e recusa de artefato alterado.
 - O perfil `arkhe-govtech/local-evidence/v1`, o fluxo atual e `offline.html` não mudaram. A página offline ainda não verifica bundles AFiR, e o app não emite recibos AFiR.
 
+## Não lançado — pesquisa de 27/10/2026
+
+- Pesquisa SIAFIC municipal com fontes primárias, limites de verificação do PE 034/2026 e correção das alegações de saldo, identidade, auditoria e LGPD.
+- Contrato proposto do guard, regras por etapa da despesa e backlog SG01–SG09 com critérios de aceite para homologação e piloto.
+- Índice, requisitos e roadmap vinculados à pesquisa; nenhuma integração ou garantia adicional declarada implementada.
+
 ## 0.1.0 — 24/10/2026
 
 - Distribuição independente do GovTech, com shell/login, bootstrap e SQLite próprios.
